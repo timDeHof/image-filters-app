@@ -20,4 +20,5 @@
       </div>
     </div>
   </div>
+  <AppBG />
 </template>
