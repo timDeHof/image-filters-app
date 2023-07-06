@@ -1,11 +1,11 @@
 <template>
   <div class="my-8">
     <canvas width="448" height="448" ref="canvasEl"></canvas>
-    <div class="text-white text-xl mt-4">
+    <div class="mt-4 text-xl text-white">
       <div class="flex justify-center gap-4">
         <button
           type="button"
-          class="py-4 w-full"
+          class="w-full py-4"
           v-for="(filter, index) in filters"
           :key="index"
           :class="{
@@ -17,7 +17,13 @@
           {{ filter }}
         </button>
       </div>
-      <a class="bg-indigo-700 py-4 block w-full mt-2 text-center"> Download </a>
+      <a
+        class="block w-full py-4 mt-2 text-center bg-indigo-700"
+        :href="canvasImgURL"
+        download="image.png"
+      >
+        Download
+      </a>
     </div>
   </div>
 </template>
@@ -25,12 +31,20 @@
 <script setup lang="ts">
 import { useImageStore } from '@/stores/image'
 import useReader from '@/composables/use-reader'
+import useCanvas from '@/composables/use-canvas'
+
 const filters = ['oceanic', 'vintage', 'rosetint']
 const store = useImageStore()
+const { canvasEl, loadImage, drawOriginalImage, filterImage, canvasImgURL } = useCanvas()
 const { reader } = useReader(store.file, () => {
   if (!reader.result) return
 
   const dataURL = reader.result.toString()
-  console.log(dataURL)
+  loadImage(dataURL)
+})
+
+store.$subscribe((mutation, state) => {
+  drawOriginalImage()
+  filterImage(state.filter)
 })
 </script>
